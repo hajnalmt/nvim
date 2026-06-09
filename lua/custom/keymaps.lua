@@ -59,6 +59,7 @@ end, { desc = '[P]roject create [D]irectory' })
 
 -- Personal keymaps
 vim.keymap.set('n', '<leader>cfp', ':let @+=expand("%:p")<CR>', { desc = '[C]opy [F]ile [P]ath' })
+vim.keymap.set('n', '<leader>cd', '<cmd>cd %:p:h<CR>', { desc = '[C]hange to current file [D]ir' })
 
 -- Use <CR> to accept the highlighted command-line completion.
 -- When the wildmenu is open, <CR> accepts the selection (built-in <C-y>);
