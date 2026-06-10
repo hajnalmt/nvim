@@ -537,16 +537,17 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        gopls = {}, -- UNCOMMENTED
+        lua_ls = {}, -- UNCOMMENTED: ensures lua-language-server is installed by Mason and gets blink.cmp capabilities
+        pyright = {}, -- UNCOMMENTED
+        rust_analyzer = {}, -- UNCOMMENTED
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        ts_ls = {}, -- UNCOMMENTED
       }
 
       -- Ensure the servers and tools above are installed
@@ -559,8 +560,20 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'black', -- Python: formatter
+        'isort', -- Python: import sorter
+        'prettierd', -- JS/TS: fast prettier daemon
         -- You can add other tools here that you want Mason to install
       })
+
+      -- Go tools are managed by asdf, which forces GOBIN to its own dir and
+      -- exposes binaries via shims. Mason's `go install` can't link them
+      -- (it fails with "non-existent target"). So we install gopls/goimports
+      -- with `go install` + `asdf reshim golang` and keep Mason out of it.
+      local go_managed_by_asdf = { gopls = true, goimports = true }
+      ensure_installed = vim.tbl_filter(function(tool)
+        return not go_managed_by_asdf[tool]
+      end, ensure_installed)
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -635,6 +648,13 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'goimports' },
+        python = { 'isort', 'black' },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        rust = { 'rustfmt' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -804,12 +824,35 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     config = function()
-      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local filetypes = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'go',
+        'gomod',
+        'gosum',
+        'gowork',
+        'python',
+        'javascript',
+        'typescript',
+        'tsx',
+        'rust',
+      }
       require('nvim-treesitter').install(filetypes)
       vim.api.nvim_create_autocmd('FileType', {
         pattern = filetypes,
         callback = function()
-          vim.treesitter.start()
+          -- Parsers install asynchronously; don't error a buffer if one
+          -- isn't ready yet. Highlighting kicks in once it's installed.
+          pcall(vim.treesitter.start)
         end,
       })
     end,
