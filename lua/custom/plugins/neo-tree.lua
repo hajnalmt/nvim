@@ -11,6 +11,7 @@ return {
   lazy = false,
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '<leader>tt', ':Neotree toggle<CR>', desc = '[T]oggle Neo-[T]ree' },
   },
   opts = {
     close_if_last_window = true,
