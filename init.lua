@@ -301,7 +301,21 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
+        defaults = {
+          file_ignore_patterns = { '%.git/' },
+        },
+        pickers = {
+          find_files = {
+            hidden = true, -- include dotfiles (.env, .github, ...)
+            -- no_ignore = true, -- uncomment to also search gitignored files
+          },
+          live_grep = {
+            additional_args = function()
+              return { '--hidden' } -- ripgrep: search hidden files
+              -- return { '--hidden', '--no-ignore' } -- also gitignored
+            end,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
