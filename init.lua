@@ -307,12 +307,12 @@ require('lazy').setup({
         pickers = {
           find_files = {
             hidden = true, -- include dotfiles (.env, .github, ...)
-            -- no_ignore = true, -- uncomment to also search gitignored files
+            no_ignore = true, -- uncomment to also search gitignored files
           },
           live_grep = {
             additional_args = function()
-              return { '--hidden' } -- ripgrep: search hidden files
-              -- return { '--hidden', '--no-ignore' } -- also gitignored
+              -- return { '--hidden' } -- ripgrep: search hidden files
+              return { '--hidden', '--no-ignore' } -- also gitignored
             end,
           },
         },
