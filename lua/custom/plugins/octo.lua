@@ -15,7 +15,7 @@ return {
   opts = {
     picker = 'telescope',
     enable_builtin = true,
-    default_to_projects_v2 = true,
+    default_to_projects_v2 = false,
     suppress_missing_scope = {
       projects_v2 = true,
     },
