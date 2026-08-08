@@ -67,3 +67,23 @@ vim.keymap.set('n', '<leader>cd', '<cmd>cd %:p:h<CR>', { desc = '[C]hange to cur
 vim.keymap.set('c', '<CR>', function()
   return vim.fn.wildmenumode() == 1 and '<C-y>' or '<CR>'
 end, { expr = true })
+
+-- Create a new git branch from within Neovim
+vim.api.nvim_create_user_command('GitNewBranch', function()
+  vim.ui.input({ prompt = 'New git branch name: ' }, function(branch)
+    if not branch or branch == '' then
+      vim.notify('Branch creation cancelled', vim.log.levels.INFO)
+      return
+    end
+    local cmd = { 'git', 'checkout', '-b', branch }
+    local output = vim.fn.system(cmd)
+    if vim.v.shell_error == 0 then
+      vim.notify('Created and switched to branch: ' .. branch, vim.log.levels.INFO)
+    else
+      vim.notify('Git error: ' .. output, vim.log.levels.ERROR)
+    end
+  end)
+end, { desc = 'Create and checkout a new git branch' })
+
+-- Optional: Keymap for quick access
+vim.keymap.set('n', '<leader>gnb', ':GitNewBranch<CR>', { desc = '[G]it [N]ew [B]ranch' })
