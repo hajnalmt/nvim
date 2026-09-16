@@ -1,7 +1,7 @@
 -- opencode.nvim: in-editor AI agent
 -- https://github.com/nickjvandyke/opencode.nvim
 local opencode_cmd = 'opencode'
-local terminal_opts = { win = { position = 'right', enter = false } }
+local terminal_opts = { win = { position = 'right', enter = true } }
 
 local function toggle()
   require('snacks.terminal').toggle(opencode_cmd, terminal_opts)
@@ -30,7 +30,7 @@ return {
     vim.keymap.set({ 'n', 'x' }, '<leader>as', function()
       require('opencode').select()
     end, { desc = '[A]gent opencode [S]elect' })
-    vim.keymap.set({ 'n', 't' }, '<leader>at', toggle, { desc = '[A]gent opencode [T]oggle' })
+    vim.keymap.set('n', '<leader>at', toggle, { desc = '[A]gent opencode [T]oggle' })
     vim.keymap.set({ 'n', 'x' }, '<leader>ao', function()
       return require('opencode').operator '@this '
     end, { desc = '[A]gent opencode add range', expr = true })
