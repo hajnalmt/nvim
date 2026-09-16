@@ -3,6 +3,10 @@
 return {
   'tpope/vim-fugitive',
   cmd = { 'Git', 'Gdiffsplit', 'Gvdiffsplit', 'Gedit', 'Gread', 'Gwrite' },
+  init = function()
+    -- Ensure ~/.local/bin is in PATH so fugitive can find gh, git, etc.
+    vim.env.PATH = vim.fn.expand('~/.local/bin') .. ':' .. vim.env.PATH
+  end,
   keys = {
     { '<leader>gs', '<cmd>Git<CR>', desc = '[G]it [S]tatus' },
     { '<leader>gds', '<cmd>Gdiffsplit<CR>', desc = '[G]it [D]iff [S]plit' },
