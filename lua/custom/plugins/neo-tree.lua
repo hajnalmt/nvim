@@ -17,6 +17,9 @@ return {
     close_if_last_window = true,
     enable_git_status = true,
     filesystem = {
+      filtered_items = {
+        visible = true,
+      },
       follow_current_file = {
         enabled = true,
         leave_dirs_open = false,
